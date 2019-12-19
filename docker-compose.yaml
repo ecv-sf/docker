@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+    ecv_php:
+        build:
+            context: ./container/php
+            args:
+                PHP_VERSION: ${PHP_VERSION}
+                APCU_VERSION: ${APCU_VERSION}
+                COMPOSER_VERSION: ${COMPOSER_VERSION}
+                COMPOSER_ALLOW_SUPERUSER: ${COMPOSER_ALLOW_SUPERUSER}
+                COMPOSER_NO_INTERACTION: ${COMPOSER_NO_INTERACTION}
+        container_name: ecv_php
+        volumes:
+        - ${APP_ECV_DIR}:/var/www/ecv:cached
+        - ./home/ecv_php:/root:delegated
+        links:
+        - ecv_mysql
+        - ecv_mailcatcher
+        working_dir: /var/www/ecv
+        ports:
+            - 8000:8000
+
+    ecv_mysql:
+        image: mysql:${MYSQL_VERSION}
+        container_name: ecv_mysql
+        volumes:
+        - ./.data/mysql/ecv:/var/lib/mysql:delegated
+        ports:
+        - 3306:3306
+        env_file:
+        - ./db.ecv.env
+
+    ecv_node:
+        build:
+            context: ./container/node-webpack
+            args:
+                NODE_VERSION: ${NODE_VERSION}
+        container_name: ecv_node
+        volumes:
+        - ${APP_ECV_DIR}:/var/www/ecv:cached
+        - ./home/ecv_node:/home/dev:delegated
+        working_dir: /var/www/ecv
+
+    nginx:
+        build:
+            context: ./container/nginx
+            args:
+                NGINX_VERSION: ${NGINX_VERSION}
+        container_name: ecv_nginx
+        volumes:
+        - ${APP_ECV_DIR}:/var/www/ecv:cached
+        - ./var/log/nginx:/var/log/nginx:delegated
+        links:
+        - ecv_php
+        ports:
+        - 80:80
+        - 443:443
+        - 8081:8081
+
+    # #########
+    # Dev
+    # #########
+    ecv_phpmyadmin:
+        image: phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}
+        container_name: ecv_phpmyadmin
+        ports:
+        - 8036:80
+        links:
+        - ecv_mysql
+        env_file:
+        - ./phpmyadmin.env
+
+    ecv_adminer:
+        image: adminer:${ADMINER_VERSION}
+        container_name: ecv_adminer
+        ports:
+        - 8037:8080
+        links:
+        - ecv_mysql
+
+    ecv_mailcatcher:
+        build:
+            context: container/mailcatcher
+            args:
+                RUBY_VERSION: ${RUBY_VERSION}
+        container_name: ecv_mailcatcher
+        ports:
+        - 1025:1025
+        - 1080:1080
