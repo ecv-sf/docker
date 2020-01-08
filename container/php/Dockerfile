@@ -11,7 +11,7 @@ RUN set -eux; \
 	apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev libzip-dev mysql-dev zlib-dev; \
 	apk add --no-cache bash openssh sed grep vim gcc g++ autoconf make pkgconfig build-base libc-dev wget; \
 	apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libxml2-dev ffmpeg; \
-	docker-php-ext-configure zip --with-libzip; \
+	docker-php-ext-configure zip; \
 	docker-php-ext-install -j$(nproc) intl pdo_mysql zip soap; \
 	pecl install apcu-${APCU_VERSION}; \
 	pecl clear-cache; \
@@ -25,11 +25,7 @@ RUN set -eux; \
 	apk add --no-cache --virtual .api-phpexts-rundeps $runDeps; \
 	apk del .build-deps
 
-RUN docker-php-ext-configure gd \
-    --with-gd \
-    --with-freetype-dir=/usr/include/ \
-    --with-png-dir=/usr/include/ \
-    --with-jpeg-dir=/usr/include/ && \
+RUN docker-php-ext-configure gd && \
   NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
   docker-php-ext-install -j${NPROC} gd && \
   apk del --no-cache freetype-dev libpng-dev libjpeg-turbo-dev
