@@ -5,13 +5,13 @@ MAINTAINER Guillaume Chauveau <docker@appus.fr>
 ARG APCU_VERSION
 ARG COMPOSER_VERSION
 
-RUN apk add --no-cache acl file gettext git mysql-client
+RUN apk add --no-cache acl file gettext git mysql-client postgresql-client sqlite;
 RUN set -eux; \
-	apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev libzip-dev mysql-dev zlib-dev; \
+	apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev libzip-dev mysql-dev postgresql-dev libpq-dev zlib-dev; \
 	apk add --no-cache bash openssh sed grep vim gcc g++ autoconf make pkgconfig build-base libc-dev wget; \
 	apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libxml2-dev ffmpeg; \
 	docker-php-ext-configure zip; \
-	docker-php-ext-install -j$(nproc) intl pdo_mysql zip soap; \
+	docker-php-ext-install -j$(nproc) intl pdo pdo_mysql pdo_pgsql zip soap; \
 	pecl install apcu-${APCU_VERSION}; \
 	pecl clear-cache; \
 	docker-php-ext-enable apcu opcache; \
@@ -36,4 +36,4 @@ COPY config /usr/local/etc/php/conf.d/
 
 CMD ["php-fpm"]
 
-EXPOSE 9000
+EXPOSE 8000 9000
