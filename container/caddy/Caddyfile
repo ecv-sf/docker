@@ -1,0 +1,9 @@
+https://{$SERVER_NAME} {
+    root * /var/www/ecv/public
+    php_fastcgi ecv_php:9000
+    encode zstd gzip
+    file_server
+    log {
+    	output file /var/log/access.log
+    }
+}

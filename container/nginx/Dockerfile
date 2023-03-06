@@ -1,17 +1,15 @@
 ARG NGINX_VERSION
 FROM nginx:${NGINX_VERSION}-alpine
+MAINTAINER Guillaume Chauveau <docker@appus.fr>
 
-LABEL maintainer="guillaume.chauveau@appus.fr"
-
-# Copie des configurations
-#RUN mkdir -p /etc/ssl
+ARG SERVER_NAME
 RUN rm /etc/nginx/nginx.conf
 ADD nginx.conf /etc/nginx/
 RUN rm /etc/nginx/conf.d/default.conf
 ADD ecv.conf /etc/nginx/conf.d/
+RUN sed "s/_SERVER_NAME_/$SERVER_NAME/g"
+
+
+EXPOSE 80 8080
 
 CMD ["nginx", "-g", "daemon off;"]
-
-EXPOSE 80
-EXPOSE 443
-EXPOSE 8081

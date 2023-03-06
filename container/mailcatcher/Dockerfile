@@ -1,15 +1,10 @@
-FROM ruby:2.6
+FROM ruby:2.7.7-bullseye
+MAINTAINER Guillaume Chauveau <docker@appus.fr>
 
-LABEL maintainer="guillaume.chauveau@appus.fr"
+ENV MAILCATCHER_VERSION=0.8.2
+ENV TIMEZONE="Europe/Paris"
 
-RUN apt-get update && apt-get install -y build-essential sqlite3 libsqlite3-dev \
-    && gem install mailcatcher -v 0.6.5 \
-    && apt-get remove --purge -y build-essential libsqlite3-dev && apt-get autoclean && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# smtp port
-EXPOSE 1025
-
-# webserver port
-EXPOSE 1080
+RUN gem install mailcatcher
+EXPOSE 1025 1080
 
 CMD ["mailcatcher", "-f", "--ip=0.0.0.0"]

@@ -1,7 +1,6 @@
 ARG PHP_VERSION
 FROM php:${PHP_VERSION}-fpm-alpine
-
-LABEL maintainer="guillaume.chauveau@appus.fr"
+MAINTAINER Guillaume Chauveau <docker@appus.fr>
 
 ARG APCU_VERSION
 ARG COMPOSER_VERSION
