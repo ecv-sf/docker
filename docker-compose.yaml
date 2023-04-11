@@ -139,13 +139,17 @@ services:
     ecv_pgadmin:
         image: dpage/pgadmin4:${PGADMIN_VERSION}
         container_name: ecv_pgadmin
+        volumes:
+            - ecv_pgadmin:/var/lib/pgadmin
         ports:
             # HTTP
             - target: 80
               published: ${PGADMIN_PORT:-8038}
               protocol: tcp
         links:
-            - ecv_postgres
+        - ecv_postgres
+        env_file:
+        - ./pgadmin_ecv.env
 
     ecv_mailcatcher:
         image: appus/mailcatcher:0.8.2
@@ -165,3 +169,4 @@ volumes:
     ecv_postgres:
     ecv_caddy_data:
     ecv_caddy_config:
+    ecv_pgadmin:
