@@ -2,7 +2,7 @@ version: '3'
 
 services:
     ecv_php:
-        image: appus/php-dev:8.1.16
+        image: appus/php-dev:8.2.13
         #build:
         #    context: ./container/php
         #    args:

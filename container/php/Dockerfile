@@ -9,8 +9,8 @@ RUN apk add --no-cache acl file gettext git mysql-client postgresql-client sqlit
 RUN set -eux; \
 	apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev libzip-dev mysql-dev postgresql-dev libpq-dev zlib-dev; \
 	apk add --no-cache bash openssh sed grep vim gcc g++ autoconf make pkgconfig build-base libc-dev wget; \
-	apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libxml2-dev ffmpeg; \
-	docker-php-ext-configure zip; \
+	apk add --no-cache freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev libxml2-dev ffmpeg;
+RUN docker-php-ext-configure zip; \
 	docker-php-ext-install -j$(nproc) intl pdo pdo_mysql pdo_pgsql zip soap; \
 	pecl install apcu-${APCU_VERSION}; \
 	pecl clear-cache; \
