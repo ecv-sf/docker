@@ -1,14 +1,14 @@
 services:
     ecv_php:
-        image: appus/php-dev:8.3.7
-        #build:
-        #    context: ./container/php
-        #    args:
-        #        PHP_VERSION: ${PHP_VERSION}
-        #        APCU_VERSION: ${APCU_VERSION}
-        #        COMPOSER_VERSION: ${COMPOSER_VERSION}
-        #        COMPOSER_ALLOW_SUPERUSER: ${COMPOSER_ALLOW_SUPERUSER}
-        #        COMPOSER_NO_INTERACTION: ${COMPOSER_NO_INTERACTION}
+        #image: appus/php-dev:8.3.7
+        build:
+            context: ./container/php
+            args:
+                PHP_VERSION: ${PHP_VERSION}
+                APCU_VERSION: ${APCU_VERSION}
+                COMPOSER_VERSION: ${COMPOSER_VERSION}
+                COMPOSER_ALLOW_SUPERUSER: ${COMPOSER_ALLOW_SUPERUSER}
+                COMPOSER_NO_INTERACTION: ${COMPOSER_NO_INTERACTION}
         container_name: ecv_php
         volumes:
         - ${APP_ECV_DIR}:/var/www/ecv:cached
@@ -19,11 +19,10 @@ services:
         - ecv_mailcatcher
         working_dir: /var/www/ecv
         # HTTP (Serveur SF)
-        ports:
-            - target: 8000
-              published: ${SF_SERVER_PORT:-8000}
-              protocol: tcp
-
+        #ports:
+        #    - target: 8000
+        #      published: ${SF_SERVER_PORT:-8000}
+        #      protocol: tcp
     ecv_mysql:
         image: mariadb:${MARIADB_VERSION}
         container_name: ecv_mysql
