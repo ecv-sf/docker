@@ -1,12 +1,11 @@
-ARG NGINX_VERSION
+ARG NGINX_VERSION=1.29.8
 FROM nginx:${NGINX_VERSION}-alpine
-MAINTAINER Guillaume Chauveau <docker@appus.fr>
 
 ARG SERVER_NAME
 RUN rm /etc/nginx/nginx.conf
-ADD nginx.conf /etc/nginx/
+COPY nginx.conf /etc/nginx/
 RUN rm /etc/nginx/conf.d/default.conf
-ADD ecv.conf /etc/nginx/conf.d/
+COPY ecv.conf /etc/nginx/conf.d/
 RUN sed -i "s/_SERVER_NAME_/${SERVER_NAME}/g" /etc/nginx/conf.d/ecv.conf
 
 

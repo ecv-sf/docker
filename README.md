@@ -8,14 +8,14 @@
 ## Environnement
 
 Dans le fichier [.env](.env), mettre à jour la valeur **APP_ECV_DIR** pour correspondre à la racine du projet en valeur relative.
-Modifier les valeurs du fichier **db.ecv.env** et/ou **postgres_ecv.env** si besoin.
+Modifier les valeurs du fichier **mysql_ecv.env** et/ou **postgres_ecv.env** si besoin.
 
 Beaucoup de variables d'environnement liées aux ports, nom de domaine et versions sont également modifiables.
 
 # Lancement
 
 ```
-docker compose -f docker-compose.yaml up --build
+docker compose up --build
 ```
 
 # Accéder aux containers
@@ -24,7 +24,7 @@ docker compose -f docker-compose.yaml up --build
 
 - Nginx : http://localhost ou http://localhost:8081
 - Caddy : https://localhost
-- Symfony Serveur http://localhost:8000
+- Symfony Serveur : http://localhost:8000 (nécessite de décommenter le bloc `ports` du service `ecv_php` dans `compose.yaml`)
 - Mailcatcher : http://localhost:1080
 - PhpMyAdmin : http://localhost:8036
 - Adminer : http://localhost:8037
@@ -45,26 +45,19 @@ docker exec -it ecv_node /bin/ash
 # Commandes diverses :
 
 **Depuis ce dossier :**
- - Reconstruire le container PHP :
-Commenter *image:* , décommenter *build:* puis lancer le build
+ - (Re)construire les images :
  ```
- docker compose -f docker-compose.yaml build
+ docker compose build
  ```
  - Lancer les containers du projet :
  ```
- docker compose -f docker-compose.yaml up
+ docker compose up
  ```
-
-**Depuis n'importe où :**
- - Arrêter tous les containers :
+ - Arrêter et supprimer les containers du projet :
  ```
- docker stop $(docker ps -q)
- ``` 
- - Supprimer tous les containers :
+ docker compose down
  ```
- docker rm $(docker ps -a -q)
- ``` 
- - Supprimer toutes les images
+ - Arrêter, supprimer les containers, les volumes et les images locales du projet :
  ```
- docker rmi $(docker images -q)
+ docker compose down -v --rmi local
  ```

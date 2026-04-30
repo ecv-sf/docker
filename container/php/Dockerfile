@@ -1,9 +1,8 @@
-ARG PHP_VERSION
+ARG PHP_VERSION=8.4.20
 FROM php:${PHP_VERSION}-fpm-alpine
-MAINTAINER Guillaume Chauveau <docker@appus.fr>
 
-ARG APCU_VERSION
-ARG COMPOSER_VERSION
+ARG APCU_VERSION=5.1.28
+ARG COMPOSER_VERSION=2.9.7
 
 RUN apk add --no-cache acl file gettext git mysql-client postgresql-client sqlite;
 RUN set -eux; \
