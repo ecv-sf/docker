@@ -1,22 +1,20 @@
+name: ecv
+
 services:
     ecv_php:
-        #image: appus/php-dev:8.3.7
         build:
             context: ./container/php
             args:
                 PHP_VERSION: ${PHP_VERSION}
                 APCU_VERSION: ${APCU_VERSION}
                 COMPOSER_VERSION: ${COMPOSER_VERSION}
-                COMPOSER_ALLOW_SUPERUSER: ${COMPOSER_ALLOW_SUPERUSER}
-                COMPOSER_NO_INTERACTION: ${COMPOSER_NO_INTERACTION}
         container_name: ecv_php
+        environment:
+            COMPOSER_ALLOW_SUPERUSER: ${COMPOSER_ALLOW_SUPERUSER}
+            COMPOSER_NO_INTERACTION: ${COMPOSER_NO_INTERACTION}
         volumes:
         - ${APP_ECV_DIR}:/var/www/ecv:cached
         - ./home/ecv_php:/root:delegated
-        links:
-        - ecv_mysql
-        - ecv_postgres
-        - ecv_mailcatcher
         working_dir: /var/www/ecv
         # HTTP (Serveur SF)
         #ports:
@@ -39,7 +37,7 @@ services:
         image: postgres:${POSTGRES_VERSION}
         container_name: ecv_postgres
         volumes:
-            - ecv_postgres:/var/lib/postgresql/data:delegated
+            - ecv_postgres:/var/lib/postgresql:delegated
         # ports:
         #     - target: 5432
         #       published: ${POSTGRES_PORT:-5432}
@@ -68,7 +66,7 @@ services:
         volumes:
         - ${APP_ECV_DIR}:/var/www/ecv:cached
         - ./var/log/nginx:/var/log/nginx:delegated
-        links:
+        depends_on:
         - ecv_php
 
         ports:
@@ -92,7 +90,6 @@ services:
             - ./var/log/caddy:/var/log:delegated
             - ecv_caddy_data:/data
             - ecv_caddy_config:/config
-        working_dir: /var/www/ecv
         ports:
             # HTTPS
             - target: 443
@@ -102,7 +99,7 @@ services:
             - target: 443
               published: ${HTTP3_PORT:-443}
               protocol: udp
-        links:
+        depends_on:
         - ecv_php
 
     # #########
@@ -116,7 +113,7 @@ services:
             - target: 80
               published: ${PHPMYADMIN_PORT:-8036}
               protocol: tcp
-        links:
+        depends_on:
         - ecv_mysql
         env_file:
         - ./phpmyadmin.env
@@ -129,7 +126,7 @@ services:
             - target: 8080
               published: ${ADMINER_PORT:-8037}
               protocol: tcp
-        links:
+        depends_on:
         - ecv_mysql
         - ecv_postgres
 
@@ -143,7 +140,7 @@ services:
             - target: 80
               published: ${PGADMIN_PORT:-8038}
               protocol: tcp
-        links:
+        depends_on:
         - ecv_postgres
         env_file:
         - ./pgadmin_ecv.env
@@ -154,11 +151,11 @@ services:
         ports:
         # SMTP
         - target: 1025
-          published: ${MAILCATCHER_PORT:-1025}
+          published: ${MAILCATCHER_SMTP_PORT:-1025}
           protocol: tcp
         # HTTP
         - target: 1080
-          published: ${MAILCATCHER_PORT:-1080}
+          published: ${MAILCATCHER_HTTP_PORT:-1080}
           protocol: tcp
 
 volumes:
